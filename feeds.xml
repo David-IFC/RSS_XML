@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feeds>
+  <feed name="BBC Mundo" source="BBC">
+    <url>https://feeds.bbci.co.uk/mundo/rss.xml</url>
+  </feed>
+  <feed name="El Confidencial - Espana" source="El Confidencial">
+    <url>https://rss.elconfidencial.com/espana/</url>
+  </feed>
+  <feed name="Europa Press - Internacional" source="Europa Press">
+    <url>https://www.europapress.es/rss/rss.aspx?ch=00269</url>
+  </feed>
+  <feed name="Europa Press - Sociedad" source="Europa Press">
+    <url>https://www.europapress.es/rss/rss.aspx?ch=00298</url>
+  </feed>
+  <feed name="20minutos - Nacional" source="20minutos">
+    <url>https://www.20minutos.es/rss/nacional/</url>
+  </feed>
+  <feed name="20minutos - Internacional" source="20minutos">
+    <url>https://www.20minutos.es/rss/internacional/</url>
+  </feed>
+  <feed name="ABC - Espana" source="ABC">
+    <url>https://www.abc.es/rss/feeds/abc_Espana.xml</url>
+  </feed>
+  <feed name="ABC - Internacional" source="ABC">
+    <url>https://www.abc.es/rss/feeds/abc_Internacional.xml</url>
+  </feed>
+  <feed name="El Pais - Portada" source="El Pais">
+    <url>https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada</url>
+  </feed>
+  <feed name="El Pais - Internacional" source="El Pais">
+    <url>https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada</url>
+  </feed>
+  <feed name="El Mundo - Portada" source="El Mundo">
+    <url>https://e00-elmundo.uecdn.es/elmundo/rss/portada.xml</url>
+  </feed>
+  <feed name="El Mundo - Espana" source="El Mundo">
+    <url>https://e00-elmundo.uecdn.es/elmundo/rss/espana.xml</url>
+  </feed>
+  <feed name="La Vanguardia - Internacional" source="La Vanguardia">
+    <url>https://www.lavanguardia.com/rss/internacional.xml</url>
+  </feed>
+  <feed name="La Vanguardia - Tecnologia" source="La Vanguardia">
+    <url>https://www.lavanguardia.com/rss/tecnologia.xml</url>
+  </feed>
+  <feed name="Xataka - Portada" source="Xataka">
+    <url>https://www.xataka.com/feedburner.xml</url>
+  </feed>
+  <feed name="Muy Interesante - Ciencia" source="Muy Interesante">
+    <url>https://www.muyinteresante.com/feed/rss2/</url>
+  </feed>
+</feeds>

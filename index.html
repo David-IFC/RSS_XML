@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lector XML de Noticias</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="hero">
+      <p class="eyebrow">RSS + XML</p>
+      <h1>Noticias en tiempo real desde un portal web</h1>
+      <p class="intro">
+        Esta pagina carga un archivo XML local con los portales disponibles y despues
+        lee el RSS XML del medio seleccionado para mostrar sus noticias.
+      </p>
+    </section>
+
+    <section class="panel controls">
+      <div class="control-group">
+        <label for="feedSelector">Portal de noticias</label>
+        <select id="feedSelector"></select>
+      </div>
+      <button id="reloadButton" type="button">Actualizar noticias</button>
+    </section>
+
+    <section class="panel status-panel">
+      <p id="status">Cargando configuracion XML...</p>
+    </section>
+
+    <section id="newsGrid" class="news-grid" aria-live="polite"></section>
+  </main>
+
+  <template id="newsCardTemplate">
+    <article class="news-card">
+      <span class="news-source"></span>
+      <h2 class="news-title"></h2>
+      <p class="news-date"></p>
+      <p class="news-description"></p>
+      <a class="news-link" target="_blank" rel="noreferrer noopener">Leer noticia</a>
+    </article>
+  </template>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
