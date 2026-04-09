@@ -98,6 +98,20 @@ function getTextContent(parent, selectors) {
   return "";
 }
 
+function getTextContentByLocalNames(parent, localNames) {
+  const elements = [...parent.getElementsByTagName("*")];
+
+  for (const element of elements) {
+    const localName = (element.localName || element.tagName || "").toLowerCase();
+
+    if (localNames.includes(localName) && element.textContent?.trim()) {
+      return element.textContent.trim();
+    }
+  }
+
+  return "";
+}
+
 function getLinkFromItem(item) {
   const directLink = getTextContent(item, ["link"]);
 
@@ -107,6 +121,105 @@ function getLinkFromItem(item) {
 
   const atomLink = item.querySelector("link[href]");
   return atomLink?.getAttribute("href")?.trim() || "#";
+}
+
+function getAttributeFromLocalNames(parent, localNames, attributeName) {
+  const elements = [...parent.getElementsByTagName("*")];
+
+  for (const element of elements) {
+    const localName = (element.localName || element.tagName || "").toLowerCase();
+
+    if (localNames.includes(localName)) {
+      const value = element.getAttribute(attributeName)?.trim();
+
+      if (value) {
+        return value;
+      }
+    }
+  }
+
+  return "";
+}
+
+function getCandidateImagesFromMarkup(text) {
+  if (!text?.trim()) {
+    return [];
+  }
+
+  const html = new DOMParser().parseFromString(text, "text/html");
+  return [...html.querySelectorAll("img")]
+    .map((image) => ({
+      src: image.getAttribute("src")?.trim() || "",
+      width: Number(image.getAttribute("width") || 0),
+      height: Number(image.getAttribute("height") || 0)
+    }))
+    .filter((image) => image.src);
+}
+
+function chooseBestImage(candidates) {
+  const blockedPatterns = [
+    "feedburner",
+    "feedsportal",
+    "doubleclick",
+    "analytics",
+    "tracking",
+    "pixel",
+    "blank.gif",
+    "mf.gif",
+    "ads"
+  ];
+
+  const validCandidates = candidates.filter((candidate) => {
+    const src = candidate.src.toLowerCase();
+    const tooSmall = (candidate.width > 0 && candidate.width <= 5) || (candidate.height > 0 && candidate.height <= 5);
+
+    if (tooSmall) {
+      return false;
+    }
+
+    return !blockedPatterns.some((pattern) => src.includes(pattern));
+  });
+
+  if (!validCandidates.length) {
+    return "";
+  }
+
+  validCandidates.sort((left, right) => {
+    const leftArea = (left.width || 0) * (left.height || 0);
+    const rightArea = (right.width || 0) * (right.height || 0);
+    return rightArea - leftArea;
+  });
+
+  return validCandidates[0].src;
+}
+
+function getImageFromItem(item) {
+  const enclosureUrl = [...item.getElementsByTagName("enclosure")]
+    .find((node) => node.getAttribute("type")?.startsWith("image/"))
+    ?.getAttribute("url")?.trim();
+
+  if (enclosureUrl) {
+    return enclosureUrl;
+  }
+
+  const mediaUrl = getAttributeFromLocalNames(
+    item,
+    ["content", "thumbnail"],
+    "url"
+  );
+
+  if (mediaUrl) {
+    return mediaUrl;
+  }
+
+  const contentValue = getAttributeFromLocalNames(item, ["content"], "src");
+
+  if (contentValue) {
+    return contentValue;
+  }
+
+  const richText = getTextContentByLocalNames(item, ["encoded", "description", "summary", "content"]);
+  return chooseBestImage(getCandidateImagesFromMarkup(richText));
 }
 
 function clampWords(text, maxWords) {
@@ -143,11 +256,12 @@ function parseRssItems(xmlText, feed) {
     source: feed.source,
     title: getTextContent(item, ["title"]) || "Sin titulo",
     description: clampWords(
-      getTextContent(item, ["description", "summary", "content"]).replace(/<[^>]*>/g, "").trim(),
+      getTextContentByLocalNames(item, ["description", "summary", "content", "encoded"]).replace(/<[^>]*>/g, "").trim(),
       MAX_DESCRIPTION_WORDS
     ),
+    image: getImageFromItem(item),
     link: getLinkFromItem(item),
-    pubDate: formatDate(getTextContent(item, ["pubDate", "published", "updated"]))
+    pubDate: formatDate(getTextContentByLocalNames(item, ["pubdate", "published", "updated"]))
   }));
 }
 
@@ -163,12 +277,21 @@ function renderNews(items) {
 
   items.forEach((item) => {
     const card = template.content.firstElementChild.cloneNode(true);
+    const image = card.querySelector(".news-image");
     card.querySelector(".news-source").textContent = item.source;
     card.querySelector(".news-title").textContent = item.title;
     card.querySelector(".news-date").textContent = item.pubDate;
     card.querySelector(".news-description").textContent = item.description;
     const link = card.querySelector(".news-link");
     link.href = item.link;
+
+    if (item.image) {
+      image.src = item.image;
+      image.alt = `Imagen de la noticia: ${item.title}`;
+    } else {
+      image.remove();
+    }
+
     fragment.appendChild(card);
   });
 
